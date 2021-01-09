@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redirect-deployment
+spec:
+  selector:
+    matchLabels:
+      app: redirect-deployment
+  template:
+    metadata:
+      labels:
+        app: redirect-deployment
+    spec:
+      containers:
+      - name: redirect-image
+        image: jeancainelli/redirect:latest # image dockerhub
+        imagePullPolicy: Never # image is assumed to exist locally
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: redirect-volume
+            mountPath: /var/www/html
+      volumes:
+        - name: redirect-volume
+          persistentVolumeClaim:
+              claimName: redirect-pvc
